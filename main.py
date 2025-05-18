@@ -1,21 +1,23 @@
 import tkinter as tk
+from functions import dimension, create_sweep_line
 
 root = tk.Tk()
 root.title("Radar")
 root.state('zoomed')
 w=tk.Canvas(root)
 w.pack(fill=tk.BOTH, expand = True)
-def dimension(event):
-    
-        width=event.width
-        height=event.height
-    
-tk.canvas.bind("<Configure>", dimension)
-radius = min(width, height) / 2
-x1 = height/2 - radius
-y1 = width/2 - radius
-x2 = height/2 + radius
-y2 = width/2 + radius
-w.create_oval(x1, y1, x2, y2, fill = "white")
 w.config(background="green")
+
+sweep_line_created = False
+
+def resize(event):
+    global sweep_line_created
+    center_x, center_y, radius = dimension(event, w)
+    if not sweep_line_created:
+        create_sweep_line(w, center_x, center_y, radius)
+        sweep_line_created = True
+
+    
+#w.bind("<Configure>", lambda event: dimension(event, w))
+w.bind("<Configure>", resize)
 root.mainloop()
